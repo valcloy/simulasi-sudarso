@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulasi Tes SKD/CAT RS Sudarso</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    h2 { color: #2c3e50; }
+    .question { margin-bottom: 15px; }
+    .category { margin-top: 30px; }
+    .result { margin-top: 30px; font-weight: bold; }
+    #timer {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      background: #f8f9fa;
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div id="timer">Sisa Waktu: 60:00</div>
+  <h1>Simulasi Tes SKD/CAT RS Sudarso</h1>
+  <form id="quizForm">
+    <div id="quizContainer"></div>
+    <button type="submit" id="submitBtn">Selesai & Lihat Hasil</button>
+  </form>
+  <div class="result" id="result"></div>
+
+  <script>
+    const questions = [
+      // === SKD Hitungan ===
+      { kategori: "SKD Hitungan", soal: "Sebuah toko memberikan diskon 25% untuk barang seharga Rp240.000. Berapa harga setelah diskon?", opsi: ["Rp60.000", "Rp180.000", "Rp190.000", "Rp200.000", "Rp210.000"], jawaban: "B" },
+      { kategori: "SKD Hitungan", soal: "Jika 3x + 2 = 20, maka nilai dari x adalah...", opsi: ["5", "6", "7", "8", "9"], jawaban: "B" },
+      { kategori: "SKD Hitungan", soal: "Hasil dari 75 ÷ 5 × 4 adalah...", opsi: ["50", "55", "60", "65", "70"], jawaban: "C" },
+      { kategori: "SKD Hitungan", soal: "Jika 40% dari suatu bilangan adalah 80, maka bilangan itu adalah...", opsi: ["160", "180", "200", "220", "240"], jawaban: "C" },
+      { kategori: "SKD Hitungan", soal: "Rata-rata dari 12, 15, 18, dan 21 adalah...", opsi: ["14", "15", "16.5", "17", "18"], jawaban: "C" },
+      { kategori: "SKD Hitungan", soal: "Jika 4 orang menyelesaikan pekerjaan dalam 6 hari, berapa hari dibutuhkan oleh 3 orang?", opsi: ["6", "7", "8", "9", "10"], jawaban: "C" },
+      { kategori: "SKD Hitungan", soal: "Urutan bilangan dari terkecil ke terbesar: 0.6, 3/4, 5/8, 0.8", opsi: ["3/4, 0.8, 5/8, 0.6", "0.6, 5/8, 3/4, 0.8", "5/8, 0.6, 3/4, 0.8", "0.6, 3/4, 0.8, 5/8", "5/8, 0.8, 0.6, 3/4"], jawaban: "B" },
+      { kategori: "SKD Hitungan", soal: "Barang dinaikkan 20% dari Rp250.000. Harga baru adalah...", opsi: ["Rp275.000", "Rp290.000", "Rp300.000", "Rp310.000", "Rp320.000"], jawaban: "C" },
+      { kategori: "SKD Hitungan", soal: "1 liter bensin menempuh 12 km. 5 liter menempuh...?", opsi: ["50", "55", "60", "65", "70"], jawaban: "C" },
+      { kategori: "SKD Hitungan", soal: "2/5 dari suatu bilangan adalah 18. Maka bilangan itu...?", opsi: ["36", "40", "42", "45", "50"], jawaban: "D" },
+      { kategori: "SKD Hitungan", soal: "Mobil tempuh 360 km dalam 6 jam. Kecepatannya...?", opsi: ["50", "55", "60", "65", "70"], jawaban: "C" },
+      { kategori: "SKD Hitungan", soal: "Nilai dari 3 + 4² adalah...", opsi: ["25", "30", "35", "40", "45"], jawaban: "A" },
+      { kategori: "SKD Hitungan", soal: "Di kelas 12 laki-laki, 18 perempuan. Persentase perempuan...?", opsi: ["55%", "60%", "62%", "65%", "70%"], jawaban: "B" },
+      { kategori: "SKD Hitungan", soal: "Panjang 12 cm dan lebar 8 cm. Luasnya...?", opsi: ["80 cm²", "88 cm²", "90 cm²", "96 cm²", "100 cm²"], jawaban: "D" },
+      { kategori: "SKD Hitungan", soal: "Hari ini Selasa, 50 hari lagi hari...?", opsi: ["Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], jawaban: "B" },
+
+      // === TWK ===
+      { kategori: "TWK", soal: "Dasar negara Indonesia adalah...", opsi: ["UUD 1945", "Pancasila", "Proklamasi", "GBHN", "Tap MPR"], jawaban: "B" },
+      { kategori: "TWK", soal: "Sila keempat Pancasila mengandung nilai...", opsi: ["Keadilan sosial", "Kemanusiaan", "Musyawarah", "Ketuhanan", "Nasionalisme"], jawaban: "C" },
+      { kategori: "TWK", soal: "Lembaga yang menguji UU terhadap UUD 1945...?", opsi: ["DPR", "MA", "MK", "Presiden", "DPD"], jawaban: "C" },
+      { kategori: "TWK", soal: "UUD 1945 pertama kali disahkan pada...?", opsi: ["17 Agustus 1945", "18 Agustus 1945", "1 Juni 1945", "20 Okt 1945", "28 Okt 1945"], jawaban: "B" },
+      { kategori: "TWK", soal: "Bentuk negara Indonesia adalah...?", opsi: ["Kerajaan", "Serikat", "Koloni", "Kesatuan", "Uni"], jawaban: "D" },
+      { kategori: "TWK", soal: "Semboyan Bhinneka Tunggal Ika terdapat pada...?", opsi: ["Bendera", "Pancasila", "Garuda", "UUD 1945", "Sumpah Pemuda"], jawaban: "C" },
+      { kategori: "TWK", soal: "Posisi Indonesia secara geografis...?", opsi: ["Ekonomi", "Geologis", "Strategis", "Historis", "Sosial"], jawaban: "C" },
+      { kategori: "TWK", soal: "Tujuan negara menurut UUD 1945 alinea ke-4, kecuali...?", opsi: ["Melindungi bangsa", "Mencerdaskan", "Keadilan sosial", "Negara adidaya", "Ketertiban dunia"], jawaban: "D" },
+      { kategori: "TWK", soal: "Yang mengangkat duta dan konsul...?", opsi: ["Menlu", "DPR", "Presiden", "DPD", "MA"], jawaban: "C" },
+      { kategori: "TWK", soal: "Perubahan UUD dilakukan oleh...?", opsi: ["Presiden", "DPR", "MPR", "MK", "DPD"], jawaban: "C" },
+      { kategori: "TWK", soal: "Wujud cinta tanah air, kecuali...?", opsi: ["Membayar pajak", "Gunakan produk dalam negeri", "Upacara bendera", "Jaga lingkungan", "Merusak fasilitas umum"], jawaban: "E" },
+      { kategori: "TWK", soal: "Sumpah Pemuda diikrarkan pada...?", opsi: ["17 Agustus 1945", "28 Oktober 1928", "1 Juni 1945", "21 April 1928", "20 Mei 1908"], jawaban: "B" },
+      { kategori: "TWK", soal: "G30S/PKI terjadi pada tahun...?", opsi: ["1945", "1955", "1965", "1975", "1985"], jawaban: "C" },
+      { kategori: "TWK", soal: "Lembaga yang memeriksa keuangan negara...?", opsi: ["BPK", "KPK", "MK", "DPR", "MA"], jawaban: "A" },
+      { kategori: "TWK", soal: "Sila pertama Pancasila berbunyi...?", opsi: ["Ketuhanan Yang Maha Esa", "Persatuan Indonesia", "Keadilan Sosial", "Kemanusiaan", "Kerakyatan"], jawaban: "A" },
+
+      // === Pengetahuan Umum ===
+      { kategori: "Pengetahuan Umum", soal: "Ibukota Afrika Selatan adalah...", opsi: ["Cape Town", "Johannesburg", "Pretoria", "Durban", "Nairobi"], jawaban: "A" },
+      { kategori: "Pengetahuan Umum", soal: "Organ manusia yang berfungsi menyaring racun dalam darah adalah...", opsi: ["Jantung", "Paru-paru", "Ginjal", "Hati", "Pankreas"], jawaban: "D" },
+      { kategori: "Pengetahuan Umum", soal: "Jumlah provinsi di Indonesia per tahun 2024 adalah...", opsi: ["34", "37", "38", "39", "40"], jawaban: "D" },
+      { kategori: "Pengetahuan Umum", soal: "Presiden wanita pertama di dunia adalah...", opsi: ["Margaret Thatcher", "Sirimavo Bandaranaike", "Indira Gandhi", "Angela Merkel", "Benazir Bhutto"], jawaban: "B" },
+      { kategori: "Pengetahuan Umum", soal: "Benua yang tidak memiliki gurun adalah...", opsi: ["Asia", "Eropa", "Australia", "Afrika", "Amerika Selatan"], jawaban: "B" },
+      { kategori: "Pengetahuan Umum", soal: "Planet terbesar di tata surya adalah...", opsi: ["Saturnus", "Bumi", "Uranus", "Yupiter", "Neptunus"], jawaban: "D" },
+      { kategori: "Pengetahuan Umum", soal: "Bahasa resmi PBB yang bukan termasuk dalam 6 bahasa resminya adalah...", opsi: ["Arab", "Portugis", "Rusia", "Prancis", "Mandarin"], jawaban: "B" },
+      { kategori: "Pengetahuan Umum", soal: "Negara dengan garis pantai terpanjang di dunia adalah...", opsi: ["Australia", "Kanada", "Rusia", "Indonesia", "Amerika Serikat"], jawaban: "B" },
+      { kategori: "Pengetahuan Umum", soal: "Lagu kebangsaan Jepang adalah...", opsi: ["Sakura", "Kimigayo", "Arigatou", "Nippon no Uta", "Tokyo no Namida"], jawaban: "B" },
+      { kategori: "Pengetahuan Umum", soal: "Negara manakah yang pertama kali mendaratkan manusia di bulan?", opsi: ["Rusia", "Amerika Serikat", "Cina", "India", "Jerman"], jawaban: "B" },
+
+      // === TKB Administrasi ===
+      { kategori: "TKB Administrasi", soal: "Apa itu SIMRS dalam konteks rumah sakit?", opsi: ["Sistem Informasi Manajemen Rumah Sakit", "Sistem Informasi Manajemen Rujukan Sementara", "Sistem Inventaris Medis Rumah Sakit", "Sistem Integrasi Manajemen Rumah Sakit", "Sistem Inspeksi Medis Rumah Sakit"], jawaban: "A" },
+      { kategori: "TKB Administrasi", soal: "Apa fungsi dari unit pelayanan front office di RS?", opsi: ["Memeriksa kondisi pasien", "Mengelola keuangan RS", "Melayani administrasi pasien masuk dan keluar", "Menentukan jadwal dokter", "Mengatur distribusi obat"], jawaban: "C" },
+      { kategori: "TKB Administrasi", soal: "Surat resmi keluar dari RS ke instansi luar harus menggunakan...", opsi: ["Bahasa asing", "Bahasa informal", "Bahasa tulis bebas", "Tata naskah dinas", "Bahasa sehari-hari"], jawaban: "D" },
+      { kategori: "TKB Administrasi", soal: "Salah satu prinsip etika dalam administrasi rumah sakit adalah...", opsi: ["Kerahasiaan data pasien", "Membuka semua arsip", "Memberi informasi tanpa verifikasi", "Berbagi dokumen pasien ke media", "Menjawab tanpa identitas"], jawaban: "A" },
+      { kategori: "TKB Administrasi", soal: "Jika pasien marah karena antrean, petugas sebaiknya...?", opsi: ["Meninggalkannya", "Bersikap tenang dan menjelaskan", "Menyalahkan sistem", "Meminta pasien kembali lain hari", "Menghindar"], jawaban: "B" },
+      { kategori: "TKB Administrasi", soal: "Apa arti dari BHP dalam konteks alat habis pakai rumah sakit?", opsi: ["Barang Harian Pasien", "Bahan Habis Pakai", "Biaya Harta Pasien", "Buku Harian Pengunjung", "Barang Hidup Permanen"], jawaban: "B" },
+      { kategori: "TKB Administrasi", soal: "Unit mana yang bertugas menangani jadwal kunjungan pasien?", opsi: ["Keuangan", "Rekam Medis", "Rawat Inap", "Penjadwalan & Informasi", "Farmasi"], jawaban: "D" },
+      { kategori: "TKB Administrasi", soal: "Kapan arsip pasien dapat dimusnahkan?", opsi: ["Setiap saat", "Setelah 1 tahun", "Sesuai ketentuan retensi arsip", "Saat pasien sembuh", "Saat kapasitas penuh"], jawaban: "C" },
+      { kategori: "TKB Administrasi", soal: "Jenis arsip yang digunakan untuk audit internal adalah...", opsi: ["Arsip keuangan", "Arsip promosi", "Arsip internal administrasi", "Arsip keluarga pasien", "Arsip medis aktif"], jawaban: "C" },
+      { kategori: "TKB Administrasi", soal: "Format penulisan tanggal dalam surat dinas adalah...", opsi: ["2025/04/01", "01/04/2025", "1 April 2025", "04-01-2025", "2025.04.01"], jawaban: "C" },
+      { kategori: "TKB Administrasi", soal: "Fungsi utama rekam medis dalam administrasi rumah sakit adalah...", opsi: ["Arsip pajak", "Sumber data statistik", "Sarana promosi", "Dokumen peralatan", "Bukti transaksi keuangan"], jawaban: "B" },
+      { kategori: "TKB Administrasi", soal: "Tindakan yang tepat saat mengelola dokumen rahasia adalah...", opsi: ["Menduplikasinya", "Menyimpannya di tempat terbuka", "Memberikannya ke semua staf", "Menyimpannya dengan sistem proteksi", "Meninggalkannya di meja kerja"], jawaban: "D" },
+      { kategori: "TKB Administrasi", soal: "Dalam komunikasi tertulis resmi rumah sakit, unsur berikut WAJIB ADA, KECUALI...", opsi: ["Tanggal", "Nomor surat", "Salam penutup", "Biodata lengkap penulis", "Lampiran (jika ada)"], jawaban: "D" },
+      { kategori: "TKB Administrasi", soal: "Manajemen pelayanan pasien di rumah sakit dikenal juga dengan istilah...", opsi: ["Service Engineering", "Patient Flow Management", "Resource Planning", "Service Control", "Inventory Handling"], jawaban: "B" },
+      { kategori: "TKB Administrasi", soal: "Sistem antrean digital rumah sakit bertujuan untuk...", opsi: ["Mengurangi staf", "Memperlambat proses", "Menambah biaya", "Mempercepat dan merapikan alur pelayanan", "Menggantikan petugas medis"], jawaban: "D" }
+
+    ,
+      { kategori: "TKB Administrasi", soal: "Apa yang harus dilakukan jika printer di unit administrasi rusak?", opsi: ["Menunggu sampai diperbaiki", "Melaporkan ke bagian IT", "Mencoba memperbaiki sendiri", "Mengabaikan masalah", "Menggunakan printer staf lain tanpa izin"], jawaban: "B" },
+      { kategori: "TKB Administrasi", soal: "Apa pentingnya tanda tangan dalam surat resmi?", opsi: ["Sebagai formalitas", "Agar terlihat resmi", "Sebagai bukti otorisasi", "Untuk memperindah surat", "Sebagai identitas pribadi"], jawaban: "C" },
+      { kategori: "TKB Administrasi", soal: "Jika pasien meminta salinan dokumen medis, apa yang harus dilakukan?", opsi: ["Menyerahkan langsung", "Mengabaikan permintaan", "Meminta izin dan mengikuti prosedur", "Menolak dengan sopan", "Memberi tanpa verifikasi"], jawaban: "C" },
+      { kategori: "TKB Administrasi", soal: "Sebelum rapat dimulai, petugas administrasi sebaiknya...?", opsi: ["Pergi istirahat", "Menyiapkan daftar hadir dan notulen", "Mematikan lampu", "Membagikan makanan", "Mencari dokumen lain"], jawaban: "B" },
+      { kategori: "TKB Administrasi", soal: "Arsip digital lebih aman jika disimpan dalam...?", opsi: ["Flashdisk saja", "Komputer tanpa password", "Cloud storage dengan proteksi", "Email pribadi", "Laptop umum"], jawaban: "C" }
+    ];
+
+    const quizContainer = document.getElementById("quizContainer");
+    const resultContainer = document.getElementById("result");
+    const quizForm = document.getElementById("quizForm");
+
+    // Acak soal
+    const shuffled = questions.sort(() => Math.random() - 0.5);
+
+    shuffled.forEach((q, index) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <div><strong>(${index + 1}) [${q.kategori}]</strong> ${q.soal}</div>
+        ${q.opsi.map((opt, i) => `
+          <label>
+            <input type="radio" name="q${index}" value="${String.fromCharCode(65 + i)}">
+            ${opt}
+          </label><br>
+        `).join("")}
+      `;
+      quizContainer.appendChild(div);
+    });
+
+    quizForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      let skor = 0;
+      const total = shuffled.length;
+
+      shuffled.forEach((q, i) => {
+        const jawaban = quizForm[`q${i}`]?.value;
+        if (jawaban === q.jawaban) skor++;
+      });
+
+      const persen = Math.round((skor / total) * 100);
+      const pesan = skor > 40
+        ? "🎉 Akmal belikan baju dinas dan kita bakar bakar!"
+        : "📚 Belajar lagi, masih ada waktu!";
+
+      resultContainer.innerHTML = `<p>Skor Anda: <strong>${skor}/${total}</strong> (${persen}%)</p><p>${pesan}</p>`;
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    // Timer
+    let waktu = 60 * 60;
+    const timerEl = document.getElementById("timer");
+    const countdown = setInterval(() => {
+      const menit = Math.floor(waktu / 60);
+      const detik = waktu % 60;
+      timerEl.textContent = `Sisa Waktu: ${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
+      waktu--;
+      if (waktu < 0) {
+        clearInterval(countdown);
+        alert("Waktu habis! Jawaban Anda akan dikirim.");
+        document.getElementById("submitBtn").click();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
